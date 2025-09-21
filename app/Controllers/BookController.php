@@ -100,6 +100,7 @@ class BookController extends Controller
             'page' => $pagination['page'],
             'totalPages' => $pagination['totalPages'],
             'books' => $filteredBooks,
+            'allBooks' => $this->books,
         ]);
     }
 
@@ -114,6 +115,118 @@ class BookController extends Controller
 
         return view('partials/book_list', [
             'booksOnPage' => $pagination['books'],
+        ]);
+    }
+
+    public function add()
+    {
+        // Validate file upload
+        $validationRule = [
+            'gambar' => [
+                'label' => 'Image File',
+                'rules' => 'uploaded[gambar]'
+                    . '|is_image[gambar]'
+                    . '|mime_in[gambar,image/jpg,image/jpeg,image/gif,image/png,image/webp]'
+                    . '|max_size[gambar,2048]',
+            ],
+        ];
+
+        if (!$this->validate($validationRule)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid file upload'
+            ]);
+        }
+
+        $file = $this->request->getFile('gambar');
+        if (!$file->isValid()) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid file'
+            ]);
+        }
+
+        // Generate new filename
+        $fileName = $file->getRandomName();
+
+        // Move file to uploads directory
+        $file->move(FCPATH . 'uploads', $fileName);
+
+        // Get other form data
+        $data = [
+            'judul' => $this->request->getPost('judul'),
+            'pengarang' => $this->request->getPost('pengarang'),
+            'kategori' => $this->request->getPost('kategori'),
+            'tahun' => $this->request->getPost('tahun'),
+            'gambar' => $fileName
+        ];
+
+        // Add to your books model/database
+        // $this->booksModel->insert($data);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Book added successfully'
+        ]);
+    }
+
+    public function edit()
+    {
+        $originalTitle = $this->request->getPost('originalTitle');
+        $title = $this->request->getPost('title');
+        $author = $this->request->getPost('author');
+        $genre = $this->request->getPost('genre');
+        $year = $this->request->getPost('year');
+        $image = $this->request->getFile('image');
+
+        // Find the book by original title
+        foreach ($this->books as &$book) {
+            if ($book['title'] === $originalTitle) {
+                $book['title'] = $title;
+                $book['author'] = $author;
+                $book['genre'] = $genre;
+                $book['year'] = $year;
+
+                // Handle image upload if a new image is provided
+                if ($image && $image->isValid() && !$image->hasMoved()) {
+                    $newName = $image->getRandomName();
+                    $image->move(FCPATH . 'uploads', $newName);
+                    $book['image'] = $newName;
+                }
+
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Book updated successfully'
+                ]);
+            }
+        }
+
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Book not found'
+        ]);
+    }
+
+    public function detail()
+    {
+        $title = $this->request->getGet('title');
+        // If you use id: $id = $this->request->getGet('id');
+
+        // Find the book by title
+        $book = null;
+        foreach ($this->books as $b) {
+            if ($b['title'] === $title) {
+                $book = $b;
+                break;
+            }
+        }
+
+        if (!$book) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Book not found");
+        }
+
+        return view('detail_buku', [
+            'book' => $book
         ]);
     }
 }
