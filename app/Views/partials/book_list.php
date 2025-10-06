@@ -22,7 +22,7 @@
               <p class="mb-0"><?= esc($book['genre']) ?></p>
               <p><?= esc($book['year']) ?></p>
               <div class="d-grid gap-1 d-md-flex justify-content-md-start">
-                <a href="<?= base_url('books/detail?title=' . urlencode($book['title'])) ?>" class="btn btn-primary">Detail</a>
+                <a href="<?= base_url('books/detail?title=' . urlencode($book['title'])) ?>" class="btn btn-secondary">Detail</a>
               </div>
             </div>
           </div>

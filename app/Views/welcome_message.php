@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 
 <!-- Main -->
-<div class="d-flex justify-content-center align-items-center mb-4">
+<div class="d-flex justify-content-center align-items-center my-4">
   <img src="<?= base_url('/pattern.png') ?>" alt="Logo" width="100" class="d-inline-block align-text-top me-2">
   <h1>
     Katalog
