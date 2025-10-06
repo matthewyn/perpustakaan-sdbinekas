@@ -2,7 +2,12 @@
 <?= $this->section('content') ?>
 
 <!-- Main -->
-<h1 class="mb-4">Katalog</h1>
+<div class="d-flex justify-content-center align-items-center mb-4">
+  <img src="<?= base_url('/pattern.png') ?>" alt="Logo" width="100" class="d-inline-block align-text-top me-2">
+  <h1>
+    Katalog
+  </h1>
+</div>
 
 <div class="card">
   <div class="card-body">
@@ -12,17 +17,27 @@
           <nav aria-label="Page navigation example" class="col-4">
             <ul class="pagination mb-0">
               <li class="page-item<?= $page <= 1 ? ' disabled' : '' ?>">
-                <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $page-1])) ?>" aria-label="Previous">
+                <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => 1])) ?>" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
-              <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+              <?php
+                // Pagination window logic
+                $maxPagesToShow = 5;
+                $startPage = max(1, $page - floor($maxPagesToShow / 2));
+                $endPage = $startPage + $maxPagesToShow - 1;
+                if ($endPage > $totalPages) {
+                  $endPage = $totalPages;
+                  $startPage = max(1, $endPage - $maxPagesToShow + 1);
+                }
+                for ($i = $startPage; $i <= $endPage; $i++):
+              ?>
                 <li class="page-item<?= $i == $page ? ' active' : '' ?>">
                   <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>"><?= $i ?></a>
                 </li>
               <?php endfor; ?>
               <li class="page-item<?= $page >= $totalPages ? ' disabled' : '' ?>">
-                <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $page+1])) ?>" aria-label="Next">
+                <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $totalPages])) ?>" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>

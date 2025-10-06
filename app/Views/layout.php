@@ -8,11 +8,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg border-bottom mb-4">
         <div class="container">
-            <a class="navbar-brand" href="<?= base_url('/') ?>">Perpustakaan SD Binekas</a>
+            <div class="d-flex align-items-center">
+                <img src="<?= base_url('/logo.png') ?>" alt="Logo" width="50" height="50" class="d-inline-block align-text-top me-2">
+                <a class="navbar-brand" href="<?= base_url('/') ?>">Perpustakaan SD Binekas</a>
+            </div>
+            <button type="button" class="btn btn-primary">Masuk</button>
+            <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="<?= base_url('/profile.jpg') ?>" alt="User" width="40" height="40" class="d-inline-block align-text-top rounded-circle">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Keluar</a></li>
+                    </ul>
+                    </li>
+                </ul>
+            </div> -->
         </div>
-    </nav>
+        </nav>
 
     <div class="container-xxl mt-4">
         <?= $this->renderSection('content') ?>
