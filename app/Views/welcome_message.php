@@ -9,7 +9,8 @@
   </h1>
 </div>
 
-<div class="card">
+<div class="card relative">
+  <img src="<?= base_url('/children.png') ?>" alt="Children" class="position-absolute end-0" style="width: 170px; top: -120px"/>
   <div class="card-body">
     <div class="row">
       <div class="col-9">
@@ -54,16 +55,18 @@
           </div>
         </div>
         <div class="row justify-content-between mb-4">
-          <div class="col-auto">
-            <button type="button" id="tambah" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              <i class="bi bi-plus"></i>
-              Tambah Buku
-            </button>
-            <button type="button" id="ubah" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              <i class="bi bi-pencil-square"></i>
-              Ubah Buku
-            </button>
-          </div>
+          <?php if (session('role') === 'admin'): ?>
+            <div class="col-auto">
+                <button type="button" id="tambah" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  <i class="bi bi-plus"></i>
+                  Tambah Buku
+                </button>
+                <button type="button" id="ubah" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <i class="bi bi-pencil-square"></i>
+                Ubah Buku
+              </button>
+            </div>
+          <?php endif; ?>
           <div class="col-4">
             <form method="get" id="selectpickerForm">
               <?php if ($search): ?>
@@ -81,8 +84,7 @@
         </div>
         <?= $this->include('partials/book_list') ?>
       </div>
-      <div class="col text-bg-danger">
-        CC
+      <div class="col">
       </div>
     </div>
   </div>
@@ -90,7 +92,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah buku</h1>
@@ -99,76 +101,57 @@
       <div class="modal-body">
         <!-- Tambah -->
         <div id="tambahSection">
-          <div class="mb-3">
-            <label for="judul" class="form-label">Judul</label>
-            <input type="text" class="form-control" id="judul" aria-describedby="judulHelp">
+          <div class="row mb-3">
+            <div class="col">
+              <label for="judul" class="form-label">Judul</label>
+              <input type="text" class="form-control" id="judul" aria-describedby="judulHelp">
+            </div>
+            <div class="col">
+              <label for="pengarang" class="form-label">Pengarang</label>
+              <input type="text" class="form-control" id="pengarang" aria-describedby="pengarangHelp">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="illustrator" class="form-label">Illustrator</label>
+              <input type="text" class="form-control" id="illustrator" aria-describedby="illustratorHelp">
+            </div>
+            <div class="col">
+              <label for="publisher" class="form-label">Publisher</label>
+              <input type="text" class="form-control" id="publisher" aria-describedby="publisherHelp">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="series" class="form-label">Series</label>
+              <input type="text" class="form-control" id="series" aria-describedby="seriesHelp">
+            </div>
+            <div class="col">
+              <label for="kategori" class="form-label">Kategori</label>
+              <select class="form-select" id="kategori" name="kategori" aria-label="Select category">
+                <option selected disabled>Pilih kategori</option>
+                <?php
+                  // Get unique categories from $genres (already prepared in controller)
+                  foreach ($genres as $genre) {
+                    echo "<option value=\"" . esc($genre) . "\">" . esc($genre) . "</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="gambar" class="form-label">Sampul</label>
+              <input class="form-control" type="file" id="gambar">
+            </div>
+            <div class="col">
+              <label for="quantity" class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="quantity" aria-describedby="quantityHelp">
+            </div>
           </div>
           <div class="mb-3">
-            <label for="pengarang" class="form-label">Pengarang</label>
-            <input type="text" class="form-control" id="pengarang" aria-describedby="pengarangHelp">
-          </div>
-          <div class="mb-3">
-            <label for="kategori" class="form-label">Kategori</label>
-            <select class="form-select" id="kategori" name="kategori" aria-label="Select category">
-              <option selected disabled>Pilih kategori</option>
-              <?php 
-              $categories = [
-                'Fiction' => [
-                  'Adventure',
-                  'Classic',
-                  'Comic Book',
-                  'Detective',
-                  'Fantasy',
-                  'Historical Fiction',
-                  'Horror',
-                  'Literary Fiction',
-                  'Mystery',
-                  'Romance',
-                  'Science Fiction',
-                  'Thriller'
-                ],
-                'Non-Fiction' => [
-                  'Art',
-                  'Biography',
-                  'Business',
-                  'Cookbook',
-                  'Education',
-                  'History',
-                  'Philosophy',
-                  'Politics',
-                  'Psychology',
-                  'Religion',
-                  'Science',
-                  'Self-Help',
-                  'Technology'
-                ]
-              ];
-
-              foreach ($categories as $mainCategory => $subCategories) {
-                echo "<optgroup label=\"$mainCategory\">";
-                foreach ($subCategories as $category) {
-                  echo "<option value=\"$category\">$category</option>";
-                }
-                echo "</optgroup>";
-              }
-              ?>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="tahun" class="form-label">Tahun</label>
-            <select class="form-select" id="tahun" name="tahun" aria-label="Select year">
-              <option selected disabled>Pilih tahun</option>
-              <?php 
-              $currentYear = date('Y');
-              for ($year = $currentYear; $year >= 1900; $year--) {
-                echo "<option value=\"$year\">$year</option>";
-              }
-              ?>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="gambar" class="form-label">Sampul</label>
-            <input class="form-control" type="file" id="gambar">
+            <label for="notes" class="form-label">Catatan</label>
+            <textarea class="form-control" id="notes" rows="3"></textarea>
           </div>
         </div>
         <!-- Ubah -->
@@ -180,83 +163,69 @@
               <?php foreach ($allBooks as $book): ?>
                 <option value="<?= esc($book['title']) ?>" 
                   data-author="<?= esc($book['author']) ?>"
+                  data-illustrator="<?= esc($book['illustrator'] ?? '') ?>"
+                  data-publisher="<?= esc($book['publisher'] ?? '') ?>"
+                  data-series="<?= esc($book['series'] ?? '') ?>"
+                  data-quantity="<?= esc($book['quantity'] ?? '') ?>"
                   data-genre="<?= esc($book['genre']) ?>"
                   data-year="<?= esc($book['year']) ?>"
-                  data-image="<?= esc($book['image']) ?>">
+                  data-image="<?= esc($book['image']) ?>"
+                  data-notes="<?= esc($book['notes'] ?? '') ?>">
               <?php endforeach; ?>
             </datalist>
           </div>
           <div id="ubahFormFields" style="display: none;">
-            <div class="mb-3">
-              <label for="judulUbah" class="form-label">Judul</label>
-              <input type="text" class="form-control" id="judulUbah" aria-describedby="judulHelp">
+            <div class="row mb-3">
+              <div class="col">
+                <label for="judulUbah" class="form-label">Judul</label>
+                <input type="text" class="form-control" id="judulUbah" aria-describedby="judulHelp">
+              </div>
+              <div class="col">
+                <label for="pengarangUbah" class="form-label">Pengarang</label>
+                <input type="text" class="form-control" id="pengarangUbah" aria-describedby="pengarangHelp">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                <label for="illustratorUbah" class="form-label">Illustrator</label>
+                <input type="text" class="form-control" id="illustratorUbah" aria-describedby="illustratorHelp">
+              </div>
+              <div class="col">
+                <label for="publisherUbah" class="form-label">Publisher</label>
+                <input type="text" class="form-control" id="publisherUbah" aria-describedby="publisherHelp">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                <label for="seriesUbah" class="form-label">Series</label>
+                <input type="text" class="form-control" id="seriesUbah" aria-describedby="seriesHelp">
+              </div>
+              <div class="col">
+                <label for="kategoriUbah" class="form-label">Kategori</label>
+                <select class="form-select" id="kategoriUbah" name="kategoriUbah" aria-label="Select category">
+                  <option selected disabled>Pilih kategori</option>
+                  <?php
+                    foreach ($genres as $genre) {
+                      echo "<option value=\"" . esc($genre) . "\">" . esc($genre) . "</option>";
+                    }
+                  ?>
+                  ?>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                <label for="gambarUbah" class="form-label">Sampul</label>
+                <input class="form-control" type="file" id="gambarUbah">
+              </div>
+              <div class="col">
+                <label for="quantityUbah" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantityUbah" aria-describedby="quantityHelp">
+              </div>
             </div>
             <div class="mb-3">
-              <label for="pengarangUbah" class="form-label">Pengarang</label>
-              <input type="text" class="form-control" id="pengarangUbah" aria-describedby="pengarangHelp">
-            </div>
-            <div class="mb-3">
-              <label for="kategoriUbah" class="form-label">Kategori</label>
-              <select class="form-select" id="kategoriUbah" name="kategoriUbah" aria-label="Select category">
-                <option selected disabled>Pilih kategori</option>
-                <?php 
-                $categories = [
-                  'Fiction' => [
-                    'Adventure',
-                    'Classic',
-                    'Comic Book',
-                    'Detective',
-                    'Fantasy',
-                    'Historical Fiction',
-                    'Horror',
-                    'Literary Fiction',
-                    'Mystery',
-                    'Romance',
-                    'Science Fiction',
-                    'Thriller'
-                  ],
-                  'Non-Fiction' => [
-                    'Art',
-                    'Biography',
-                    'Business',
-                    'Cookbook',
-                    'Education',
-                    'History',
-                    'Philosophy',
-                    'Politics',
-                    'Psychology',
-                    'Religion',
-                    'Science',
-                    'Self-Help',
-                    'Technology'
-                  ]
-                ];
-
-                foreach ($categories as $mainCategory => $subCategories) {
-                  echo "<optgroup label=\"$mainCategory\">";
-                  foreach ($subCategories as $category) {
-                    echo "<option value=\"$category\">$category</option>";
-                  }
-                  echo "</optgroup>";
-                }
-                ?>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="tahunUbah" class="form-label">Tahun</label>
-              <select class="form-select" id="tahunUbah" name="tahunUbah" aria-label="Select year">
-                <option selected disabled>Pilih tahun</option>
-                <?php 
-                $currentYear = date('Y');
-                for ($year = $currentYear; $year >= 1900; $year--) {
-                  echo "<option value=\"$year\">$year</option>";
-                }
-                ?>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="gambarUbah" class="form-label">Sampul</label>
-              <input class="form-control" type="file" id="gambarUbah">
+              <label for="notesUbah" class="form-label">Catatan</label>
+              <textarea class="form-control" id="notesUbah" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -381,11 +350,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Get the new values from the form
     const newTitle = $('#judulUbah').val();
     const newAuthor = $('#pengarangUbah').val();
+    const newIllustrator = $('#illustratorUbah').val();
     const newGenre = $('#kategoriUbah').val();
     const newYear = $('#tahunUbah').val();
     const newImage = $('#gambarUbah')[0].files[0];
 
-    if (!originalTitle || !newTitle || !newAuthor || !newGenre || !newYear) {
+    if (!originalTitle || !newTitle || !newAuthor || !newIllustrator || !newGenre || !newYear) {
       alert('Semua field harus diisi!');
       return;
     }
@@ -394,6 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append('originalTitle', originalTitle);
     formData.append('title', newTitle);
     formData.append('author', newAuthor);
+    formData.append('illustrator', newIllustrator);
     formData.append('genre', newGenre);
     formData.append('year', newYear);
     if (newImage) {
@@ -472,6 +443,11 @@ document.addEventListener("DOMContentLoaded", () => {
     hiddenForm.find('#kategoriUbah').prop('selectedIndex', 0);
     hiddenForm.find('#tahunUbah').prop('selectedIndex', 0);
     hiddenForm.find('#gambarUbah').val('');
+    hiddenForm.find('#illustratorUbah').val(''); // Reset illustrator field
+    hiddenForm.find('#publisherUbah').val(''); // Reset publisher field
+    hiddenForm.find('#seriesUbah').val(''); // Reset series field
+    hiddenForm.find('#quantityUbah').val(''); // Reset quantity field
+    hiddenForm.find('#notesUbah').val(''); // Reset notes field
     input.removeData('originalImage');
     hiddenForm.hide();
 
@@ -486,14 +462,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // Fill the form with selected book data
         hiddenForm.find('#judulUbah').val(option.value);
         hiddenForm.find('#pengarangUbah').val(option.dataset.author);
-
-        // Set kategori
         hiddenForm.find('#kategoriUbah').val(option.dataset.genre);
-
-        // Set tahun
         hiddenForm.find('#tahunUbah').val(option.dataset.year);
-
-        // Store the original image name
+        hiddenForm.find('#illustratorUbah').val(option.dataset.illustrator); // Fill illustrator field
+        hiddenForm.find('#publisherUbah').val(option.dataset.publisher); // Fill publisher field
+        hiddenForm.find('#seriesUbah').val(option.dataset.series); // Fill series field
+        hiddenForm.find('#quantityUbah').val(option.dataset.quantity); // Fill quantity field
+        hiddenForm.find('#notesUbah').val(option.dataset.notes); // Fill notes field
         input.data('originalImage', option.dataset.image);
         break;
       }

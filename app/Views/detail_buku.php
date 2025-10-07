@@ -3,7 +3,7 @@
 
 <!-- Main -->
 <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
+  <ol class="breadcrumb mt-3">
     <li class="breadcrumb-item">
       <a href="<?= base_url() ?>">Katalog</a>
     </li>
@@ -20,19 +20,32 @@
         <img src="<?= base_url($book['image']) ?>" class="img-fluid" alt="Gambar Buku">
       </div>
       <div class="col">
-        <h2 class="fs-3">Informasi Buku</h2>
+        <div class="d-flex align-items-center gap-2">
+          <h2 class="fs-3">Informasi Buku</h2>
+          <?php if (empty($book['available'])): ?>
+            <span class="badge rounded-pill text-bg-success">Available</span>
+          <?php else: ?>
+            <span class="badge rounded-pill text-bg-danger">Not Available</span>
+          <?php endif; ?>
+        </div>
         <h3 class="fs-5 mb-1">Judul</h3>
         <p class="mb-2"><?= esc($book['title']) ?></p>
         <h3 class="fs-5 mb-1">Kategori</h3>
         <p class="mb-2"><?= esc($book['genre']) ?></p>
         <h3 class="fs-5 mb-1">Pengarang</h3>
         <p class="mb-2"><?= esc($book['author']) ?></p>
+        <h3 class="fs-5 mb-1">Series</h3>
+        <p class="mb-2"><?= esc($book['series']) ?></p>
         <h3 class="fs-5 mb-1">Tahun</h3>
         <p class="mb-2"><?= esc($book['year']) ?></p>
+        <?php if (empty($book['isInClass'])): ?>
+          <h3 class="fs-5 mb-1">Posisi Rak</h3>
+          <p class="mb-2"><?= esc($book['shelfPosition']) ?></p>
+        <?php endif; ?>
       </div>
       <div class="col">
-        <h2 class="fs-3">Abstraksi</h2>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Repudiandae fugiat voluptatibus amet saepe eveniet officiis harum unde magni ipsa temporibus eum cum, non ad ducimus quis quidem praesentium blanditiis incidunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum laudantium harum eligendi quisquam alias esse officiis ducimus tempora id saepe vitae molestiae, pariatur quibusdam sunt molestias nisi sit nihil nemo. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam cumque molestias, cum, incidunt fuga laboriosam ex porro dignissimos repellat totam illo consequatur reprehenderit labore ad, quos perspiciatis autem eos! Mollitia? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Non dolore fuga sunt aut hic, saepe illum consectetur adipisci dolorem reiciendis rerum beatae. Ea odio atque quo harum exercitationem, ipsa temporibus!</p>
+        <h2 class="fs-3">Sinopsis</h2>
+        <p><?= esc($book['synopsis']) ?></p>
       </div>
     </div>
   </div>

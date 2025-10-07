@@ -12,3 +12,6 @@ $routes->post('books/add', 'BookController::add');
 $routes->post('books/edit', 'BookController::edit');
 $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::attemptLogin');
+$routes->get('logout', 'AuthController::logout');
+$routes->get('peminjaman', 'TransactionController::peminjaman');
+$routes->get('pengembalian', 'TransactionController::pengembalian');

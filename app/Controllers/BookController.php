@@ -23,10 +23,19 @@ class BookController extends Controller
                 $year = $matches[1] ?? '';
                 
                 return [
+                    'code'  => $book['code'] ?? '',
                     'genre'  => $book['category'] ?? '',
                     'title'  => $book['title'] ?? '',
                     'author' => $book['author'] ?? '',
+                    'illustrator' => $book['illustrator'] ?? '',
+                    'publisher' => $book['publisher'] ?? '',
+                    'series' => $book['series'] ?? '',
                     'image'  => $book['image'] ?? '',
+                    'quantity'  => $book['quantity'] ?? '',
+                    'notes'  => $book['notes'] ?? '',
+                    'shelfPosition'  => $book['shelfPosition'] ?? '',
+                    'synopsis'  => $book['synopsis'] ?? '',
+                    'isInClass'  => $book['isInClass'] ?? '',
                     'year'   => $year,
                     // add other fields if needed
                 ];
