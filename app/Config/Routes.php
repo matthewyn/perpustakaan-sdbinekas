@@ -14,4 +14,3 @@ $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::attemptLogin');
 $routes->get('logout', 'AuthController::logout');
 $routes->get('peminjaman', 'TransactionController::peminjaman');
-$routes->get('pengembalian', 'TransactionController::pengembalian');

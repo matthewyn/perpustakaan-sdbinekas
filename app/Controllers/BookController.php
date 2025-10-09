@@ -43,7 +43,7 @@ class BookController extends Controller
         }
     }
 
-    private function getGenres(): array
+    public function getGenres(): array
     {
         if ($this->genres === null) {
             $this->genres = array_unique(array_map(fn($book) => $book['genre'], $this->books));

@@ -9,7 +9,7 @@
   </h1>
 </div>
 
-<div class="card relative">
+<div class="card relative" style="border-style: dashed;">
   <img src="<?= base_url('/children.png') ?>" alt="Children" class="position-absolute end-0" style="width: 170px; top: -120px"/>
   <div class="card-body">
     <div class="row">
