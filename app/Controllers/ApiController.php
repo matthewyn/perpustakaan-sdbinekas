@@ -13,7 +13,10 @@ class ApiController extends Controller
             return $this->response->setJSON(['error' => "Parameter 'image_url' is required"])->setStatusCode(400);
         }
 
-        $openaiApiKey = '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';
+        $openaiApiKey = getenv('OPENAI_API_KEY');
+        if (!$openaiApiKey) {
+            return $this->response->setJSON(['error' => 'OpenAI API key not configured'])->setStatusCode(500);
+        }
         $visionModel = "gpt-4.1";
         $searchModel = "gpt-4o-search-preview";
 
