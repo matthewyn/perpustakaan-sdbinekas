@@ -114,7 +114,7 @@
           <p id="cameraHint">Arahkan kamera ke sampul buku untuk mengunggah gambar.</p>
         </div> -->
         <!-- Tambah -->
-        <div id="tambahSection">
+        <div id="tambahSection" style="display: none;">
           <div class="row mb-3">
             <div class="col">
               <label for="judul" class="form-label">Judul</label>
@@ -258,12 +258,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalTitle = modal.querySelector('.modal-title');
   const tambahSection = document.getElementById('tambahSection');
   const ubahSection = document.getElementById('ubahSection');
-  let cameraStream;
-  const openCameraBtn = document.getElementById('openCameraBtn');
-  const captureBtn = document.getElementById('captureBtn');
-  const video = document.getElementById('cameraPreview');
-  const canvas = document.getElementById('cameraCanvas');
-  const hint = document.getElementById('cameraHint');
+  // let cameraStream;
+  // const openCameraBtn = document.getElementById('openCameraBtn');
+  // const captureBtn = document.getElementById('captureBtn');
+  // const video = document.getElementById('cameraPreview');
+  // const canvas = document.getElementById('cameraCanvas');
+  // const hint = document.getElementById('cameraHint');
 
   $('#genreSelectpicker').on('changed.bs.select', function (e) {
     loadBooks();
@@ -417,28 +417,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle modal open for Tambah
   document.getElementById('tambah').addEventListener('click', function() {
     modalTitle.textContent = 'Tambah Buku';
-    tambahSection.style.display = 'none';
+    tambahSection.style.display = 'block';
     ubahSection.style.display = 'none';
-    document.getElementById('uploadSection').style.display = 'block';
+    // document.getElementById('uploadSection').style.display = 'block';
 
     // Clear form fields
     clearForm();
   });
 
-  openCameraBtn.addEventListener('click', async () => {
-    try {
-      cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
-      video.srcObject = cameraStream;
+  // openCameraBtn.addEventListener('click', async () => {
+  //   try {
+  //     cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+  //     video.srcObject = cameraStream;
 
-      // Show the video preview and capture button
-      video.style.display = 'block';
-      captureBtn.style.display = 'inline-block';
-      openCameraBtn.style.display = 'none';
-      hint.textContent = 'Klik "Ambil Foto" untuk menangkap gambar.';
-    } catch (err) {
-      alert('Tidak dapat mengakses kamera: ' + err.message);
-    }
-  });
+  //     // Show the video preview and capture button
+  //     video.style.display = 'block';
+  //     captureBtn.style.display = 'inline-block';
+  //     openCameraBtn.style.display = 'none';
+  //     hint.textContent = 'Klik "Ambil Foto" untuk menangkap gambar.';
+  //   } catch (err) {
+  //     alert('Tidak dapat mengakses kamera: ' + err.message);
+  //   }
+  // });
 
   // captureBtn.addEventListener('click', () => {
   //   const ctx = canvas.getContext('2d');
