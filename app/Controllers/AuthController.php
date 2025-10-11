@@ -8,7 +8,12 @@ class AuthController extends Controller
 {
     public function login()
     {
-        return view('login');
+        $data = [
+            'title' => 'Login',
+            'bodyClass' => 'login-page',
+        ];
+
+        return view('login', $data);
     }
 
     public function attemptLogin()

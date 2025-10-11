@@ -18,10 +18,17 @@
             background-color: var(--bs-dark);
             color: #fff;
         }
+        body.login-page {
+            background-image: url('<?= base_url('/background.webp') ?>');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
     </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg border-bottom">
+<body class="<?= esc($bodyClass ?? '') ?>">
+    <nav class="navbar navbar-expand-lg border-bottom bg-white">
         <div class="container">
             <div class="d-flex align-items-center gap-3">
                 <button class="btn btn-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="bi bi-list"></i></button>

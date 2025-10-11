@@ -1,6 +1,6 @@
-<?= $this->extend('layout') ?>
+<?= $this->extend('layout', ['bodyClass' => 'login-page']) ?>
 <?= $this->section('content') ?>
-<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 67px); background-image: url('<?= base_url('/background.webp') ?>'); background-size: cover; background-position: center;">
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 67px);">
     <div class="col-md-4">
         <img src="<?= base_url('/logo.png') ?>" alt="Logo" width="160" class="d-block mx-auto">
         <div class="card" style="border-style: dashed; border-color: #ced4da;">
