@@ -14,3 +14,5 @@ $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::attemptLogin');
 $routes->get('logout', 'AuthController::logout');
 $routes->get('peminjaman', 'TransactionController::peminjaman');
+$routes->post('books/upload-image', 'BookController::uploadImage');
+$routes->get('api/analyze-image', 'ApiController::analyzeImage');

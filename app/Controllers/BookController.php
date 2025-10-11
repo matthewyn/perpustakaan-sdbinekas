@@ -231,4 +231,16 @@ class BookController extends Controller
             'book' => $book
         ]);
     }
+
+    public function uploadImage()
+    {
+        $file = $this->request->getFile('gambar');
+        if (!$file || !$file->isValid()) {
+            return $this->response->setJSON(['success' => false]);
+        }
+        $fileName = $file->getRandomName();
+        $file->move(FCPATH . 'uploads', $fileName);
+        $imageUrl = base_url('uploads/' . $fileName);
+        return $this->response->setJSON(['success' => true, 'imageUrl' => $imageUrl]);
+    }
 }

@@ -99,6 +99,20 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <!-- Upload foto -->
+        <!-- <div id="uploadSection" class="text-center">
+          <div>
+            <button type="button" id="openCameraBtn" class="btn btn-outline-primary mb-2">
+              <i class="bi bi-camera"></i> Buka Kamera
+            </button>
+            <button type="button" id="captureBtn" class="btn btn-success mb-2" style="display:none;">
+              <i class="bi bi-camera-fill"></i> Ambil Foto
+            </button>
+          </div>
+          <video id="cameraPreview" width="300" height="220" autoplay playsinline class="mx-auto p-3 border-1 my-3" style="display:none; border-style: dashed; border-color: #ced4da;"></video>
+          <canvas id="cameraCanvas" width="300" height="220" style="display:none;"></canvas>
+          <p id="cameraHint">Arahkan kamera ke sampul buku untuk mengunggah gambar.</p>
+        </div> -->
         <!-- Tambah -->
         <div id="tambahSection">
           <div class="row mb-3">
@@ -244,6 +258,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalTitle = modal.querySelector('.modal-title');
   const tambahSection = document.getElementById('tambahSection');
   const ubahSection = document.getElementById('ubahSection');
+  let cameraStream;
+  const openCameraBtn = document.getElementById('openCameraBtn');
+  const captureBtn = document.getElementById('captureBtn');
+  const video = document.getElementById('cameraPreview');
+  const canvas = document.getElementById('cameraCanvas');
+  const hint = document.getElementById('cameraHint');
 
   $('#genreSelectpicker').on('changed.bs.select', function (e) {
     loadBooks();
@@ -397,12 +417,70 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle modal open for Tambah
   document.getElementById('tambah').addEventListener('click', function() {
     modalTitle.textContent = 'Tambah Buku';
-    tambahSection.style.display = 'block';
+    tambahSection.style.display = 'none';
     ubahSection.style.display = 'none';
-    
+    document.getElementById('uploadSection').style.display = 'block';
+
     // Clear form fields
     clearForm();
   });
+
+  openCameraBtn.addEventListener('click', async () => {
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = cameraStream;
+
+      // Show the video preview and capture button
+      video.style.display = 'block';
+      captureBtn.style.display = 'inline-block';
+      openCameraBtn.style.display = 'none';
+      hint.textContent = 'Klik "Ambil Foto" untuk menangkap gambar.';
+    } catch (err) {
+      alert('Tidak dapat mengakses kamera: ' + err.message);
+    }
+  });
+
+  // captureBtn.addEventListener('click', () => {
+  //   const ctx = canvas.getContext('2d');
+  //   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  //   canvas.toBlob(blob => {
+  //     const file = new File([blob], "capture.png", { type: "image/png" });
+  //     const formData = new FormData();
+  //     formData.append('gambar', file);
+
+  //     // Upload image to server
+  //     $.ajax({
+  //       url: "<?= base_url('books/upload-image') ?>", // Create this endpoint
+  //       type: "POST",
+  //       data: formData,
+  //       processData: false,
+  //       contentType: false,
+  //       success: function(response) {
+  //         if (response.success && response.imageUrl) {
+  //           // Call analyze-image API with the uploaded image URL
+  //           $.get("<?= base_url('api/analyze-image') ?>", { image_url: response.imageUrl }, function(data) {
+  //             // Do something with the returned book JSON
+  //             console.log(data);
+  //             // You can autofill the form fields here if needed
+  //           });
+  //         } else {
+  //           alert('Gagal upload gambar');
+  //         }
+  //       },
+  //       error: function() {
+  //         alert('Gagal upload gambar');
+  //       }
+  //     });
+  //   });
+
+  //   // Stop camera
+  //   cameraStream.getTracks().forEach(track => track.stop());
+  //   video.style.display = 'none';
+  //   captureBtn.style.display = 'none';
+  //   openCameraBtn.style.display = 'inline-block';
+  //   hint.textContent = 'Foto berhasil diambil.';
+  // });
 
   // Handle modal open for Ubah
   document.getElementById('ubah').addEventListener('click', function() {
