@@ -124,3 +124,7 @@ _modules/*
 
 /results/
 /phpunit*.xml
+
+# Firebase Service Account Key
+serviceAccountKey.json
+Firebase.php

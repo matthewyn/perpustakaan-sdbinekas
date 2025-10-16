@@ -3,53 +3,37 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
+use App\Libraries\Firebase;
+
+ini_set('max_execution_time', 1000);
+ini_set('memory_limit', '512M');
 
 class BookController extends Controller
 {
+    private $db;
+
     private $books = [];
     private $genres = null;
     private $perPage = 10;
 
     public function __construct()
     {
-        $jsonPath = FCPATH . 'book_list.json';
-        if (file_exists($jsonPath)) {
-            $json = file_get_contents($jsonPath);
-            $rawBooks = json_decode($json, true) ?? [];
-            // Map JSON fields to expected fields
-            $this->books = array_map(function($book) {
-                // Extract year from code using regex
-                preg_match('/(\d{4})$/', $book['code'], $matches);
-                $year = $matches[1] ?? '';
-                
-                return [
-                    'code'  => $book['code'] ?? '',
-                    'genre'  => $book['category'] ?? '',
-                    'title'  => $book['title'] ?? '',
-                    'author' => $book['author'] ?? '',
-                    'illustrator' => $book['illustrator'] ?? '',
-                    'publisher' => $book['publisher'] ?? '',
-                    'series' => $book['series'] ?? '',
-                    'image'  => $book['image'] ?? '',
-                    'quantity'  => $book['quantity'] ?? '',
-                    'notes'  => $book['notes'] ?? '',
-                    'shelfPosition'  => $book['shelfPosition'] ?? '',
-                    'synopsis'  => $book['synopsis'] ?? '',
-                    'isInClass'  => $book['isInClass'] ?? '',
-                    'year'   => $year,
-                    // add other fields if needed
-                ];
-            }, $rawBooks);
-        }
+        $firebase = new Firebase();
+        $this->db = $firebase->getDatabase();
     }
 
     public function getGenres(): array
     {
-        if ($this->genres === null) {
-            $this->genres = array_unique(array_map(fn($book) => $book['genre'], $this->books));
-            sort($this->genres);
+        $books = $this->db->getReference('buku')->getValue() ?? [];
+        $genres = [];
+        foreach ($books as $book) {
+            if (isset($book['genre'])) {
+                $genres[] = $book['genre'];
+            }
         }
-        return $this->genres;
+        $genres = array_unique($genres);
+        sort($genres);
+        return $genres;
     }
 
     private function filterBooks(array $books, string $search = '', array $selectedGenres = []): array
@@ -57,15 +41,15 @@ class BookController extends Controller
         if ($search !== '') {
             $searchLower = strtolower($search);
             $books = array_filter($books, function($book) use ($searchLower) {
-                return str_contains(strtolower($book['title']), $searchLower)
-                    || str_contains(strtolower($book['author']), $searchLower)
-                    || str_contains(strtolower($book['genre']), $searchLower)
-                    || str_contains((string)$book['year'], $searchLower);
+                return str_contains(strtolower($book['title'] ?? ''), $searchLower)
+                    || str_contains(strtolower($book['author'] ?? ''), $searchLower)
+                    || str_contains(strtolower($book['genre'] ?? ''), $searchLower)
+                    || str_contains((string)($book['year'] ?? ''), $searchLower);
             });
         }
 
         if (!empty($selectedGenres)) {
-            $books = array_filter($books, fn($book) => in_array($book['genre'], $selectedGenres));
+            $books = array_filter($books, fn($book) => in_array($book['genre'] ?? '', $selectedGenres));
         }
 
         return $books;
@@ -73,11 +57,12 @@ class BookController extends Controller
 
     private function paginateBooks(array $books, int $page): array
     {
+        $books = array_values($books); // Ensure numeric keys
         $totalBooks = count($books);
         $totalPages = max(1, ceil($totalBooks / $this->perPage));
         $page = max(1, min($page, $totalPages));
         $start = ($page - 1) * $this->perPage;
-        
+
         return [
             'books' => array_slice($books, $start, $this->perPage),
             'totalPages' => $totalPages,
@@ -91,8 +76,15 @@ class BookController extends Controller
         $selectedGenres = $this->request->getGet('genres') ?? [];
         $page = (int)($this->request->getGet('page') ?? 1);
 
-        $filteredBooks = $this->filterBooks($this->books, $search, $selectedGenres);
+        $books = $this->db->getReference('buku')->getValue() ?? [];
+        $books = array_values($books); // Ensure numeric keys
+
+        $filteredBooks = $this->filterBooks($books, $search, $selectedGenres);
         $pagination = $this->paginateBooks($filteredBooks, $page);
+
+        // Get 3 latest books (assuming books are sorted by created time or just take last 3)
+        $latestBooks = array_slice(array_reverse($books), 0, 3);
+        $bookTitles = array_map(fn($b) => $b['title'], $books);
 
         return view('welcome_message', [
             'booksOnPage' => $pagination['books'],
@@ -102,7 +94,9 @@ class BookController extends Controller
             'page' => $pagination['page'],
             'totalPages' => $pagination['totalPages'],
             'books' => $filteredBooks,
-            'allBooks' => $this->books,
+            'allBooks' => $books,
+            'latestBooks' => $latestBooks,
+            'bookTitles' => $bookTitles,
         ]);
     }
 
@@ -112,7 +106,11 @@ class BookController extends Controller
         $selectedGenres = $this->request->getGet('genres') ?? [];
         $page = (int)($this->request->getGet('page') ?? 1);
 
-        $filteredBooks = $this->filterBooks($this->books, $search, $selectedGenres);
+        // Fetch books from Firebase
+        $books = $this->db->getReference('buku')->getValue() ?? [];
+        $books = array_values($books);
+
+        $filteredBooks = $this->filterBooks($books, $search, $selectedGenres);
         $pagination = $this->paginateBooks($filteredBooks, $page);
 
         return view('partials/book_list', [
@@ -177,47 +175,66 @@ class BookController extends Controller
         $originalTitle = $this->request->getPost('originalTitle');
         $title = $this->request->getPost('title');
         $author = $this->request->getPost('author');
+        $illustrator = $this->request->getPost('illustrator');
+        $publisher = $this->request->getPost('publisher');
+        $series = $this->request->getPost('series');
         $genre = $this->request->getPost('genre');
-        $year = $this->request->getPost('year');
         $image = $this->request->getFile('image');
+        $quantity = $this->request->getPost('quantity');
+        $notes = $this->request->getPost('notes');
 
-        // Find the book by original title
-        foreach ($this->books as &$book) {
-            if ($book['title'] === $originalTitle) {
-                $book['title'] = $title;
-                $book['author'] = $author;
-                $book['genre'] = $genre;
-                $book['year'] = $year;
+        $booksRef = $this->db->getReference('buku')->getValue() ?? [];
+        $updated = false;
 
-                // Handle image upload if a new image is provided
+        foreach ($booksRef as $key => $book) {
+            if (isset($book['title']) && $book['title'] === $originalTitle) {
+                $imageName = $book['image'] ?? '';
                 if ($image && $image->isValid() && !$image->hasMoved()) {
-                    $newName = $image->getRandomName();
-                    $image->move(FCPATH . 'uploads', $newName);
-                    $book['image'] = $newName;
+                    $imageName = $image->getRandomName();
+                    $image->move(FCPATH . 'uploads', $imageName);
                 }
 
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Book updated successfully'
-                ]);
+                $updateData = [
+                    'title' => $title,
+                    'author' => $author,
+                    'illustrator' => $illustrator,
+                    'publisher' => $publisher,
+                    'series' => $series,
+                    'genre' => $genre,
+                    'quantity' => $quantity,
+                    'notes' => $notes,
+                    'image' => $imageName
+                ];
+
+                $this->db->getReference('buku/' . $key)->update($updateData);
+                $updated = true;
+                break;
             }
         }
 
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Book not found'
-        ]);
+        if ($updated) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Book updated successfully'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Book not found'
+            ]);
+        }
     }
 
     public function detail()
     {
-        $title = $this->request->getGet('title');
-        // If you use id: $id = $this->request->getGet('id');
+        $title = $this->request->getGet('title'); // Use title as identifier
 
-        // Find the book by title
+        // Fetch books from Firebase
+        $books = $this->db->getReference('buku')->getValue() ?? [];
         $book = null;
-        foreach ($this->books as $b) {
-            if ($b['title'] === $title) {
+
+        foreach ($books as $b) {
+            if (isset($b['title']) && $b['title'] === $title) {
                 $book = $b;
                 break;
             }
@@ -242,5 +259,12 @@ class BookController extends Controller
         $file->move(FCPATH . 'uploads', $fileName);
         $imageUrl = base_url('uploads/' . $fileName);
         return $this->response->setJSON(['success' => true, 'imageUrl' => $imageUrl]);
+    }
+
+    public function all()
+    {
+        $books = $this->db->getReference('buku')->getValue() ?? [];
+        $books = array_values($books);
+        return $this->response->setJSON(['books' => $books]);
     }
 }

@@ -8,6 +8,16 @@
     }
 </style>
 <div class="container mt-4">
+    <!-- Main -->
+    <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-3">
+        <li class="breadcrumb-item">
+        <a href="<?= base_url() ?>">Katalog</a>
+        </li>
+        <li class="breadcrumb-item"><a href="#">Form</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Peminjaman</li>
+    </ol>
+    </nav>
     <div class="row g-3">
         <div class="col">
             <div class="card border-light">
@@ -87,7 +97,7 @@
                             <li>
                                 <h2 class="fs-4 m-0">4,422</h2>
                                 <small>Buku yang dikembalikan</small>
-                                <div class="stat-percent text-success">60% <i class="fa fa-level-down text-navy"></i></div>
+                                <div class="stat-percent text-success">60% <i class="bi bi-caret-up-fill"></i></div>
                                 <div class="progress progress-mini">
                                     <div style="width: 60%;" class="progress-bar bg-success"></div>
                                 </div>
@@ -95,7 +105,7 @@
                             <li>
                                 <h2 class="fs-4 m-0">9,180</h2>
                                 <small>Total buku</small>
-                                <div class="stat-percent text-success">22% <i class="fa fa-bolt text-navy"></i></div>
+                                <div class="stat-percent text-success">22% <i class="bi bi-caret-up-fill"></i></div>
                                 <div class="progress progress-mini">
                                     <div style="width: 22%;" class="progress-bar bg-success"></div>
                                 </div>
@@ -109,7 +119,7 @@
     </div>
     <div class="d-flex justify-content-end mt-4">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Tambah Peminjaman
+            <i class="bi bi-plus"></i> Tambah Peminjaman
         </button>
     </div>
     <div class="card border-light mt-4">
@@ -166,7 +176,7 @@
     </div>
     <div class="d-flex justify-content-end mt-4">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Tambah Pengembalian
+            <i class="bi bi-plus"></i> Tambah Pengembalian
         </button>
     </div>
     <div class="card border-light mt-4">
@@ -234,7 +244,7 @@
       <div class="modal-body">
         <div class="row mb-3">
             <div class="col siswa-select">
-              <label for="siswa" class="form-label">Siswa</label>
+              <label for="siswa" class="form-label required">Siswa</label>
               <select class="form-select" id="siswa" name="siswa" aria-label="Select siswa">
                 <option selected disabled>Pilih siswa</option>
                 <?php
@@ -245,7 +255,7 @@
               </select>
             </div>
             <div class="col">
-              <label for="buku" class="form-label">Buku</label>
+              <label for="buku" class="form-label required">Buku</label>
               <select class="form-select" id="buku" name="buku" aria-label="Select buku">
                 <option selected disabled>Pilih buku</option>
                 <?php

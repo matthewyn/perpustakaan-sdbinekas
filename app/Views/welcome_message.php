@@ -1,6 +1,10 @@
 <?= $this->extend('layout') ?>
 <?= $this->section('content') ?>
-
+<style>
+  .ui-autocomplete {
+    z-index: 2000 !important;
+  }
+</style>
 <!-- Main -->
 <div class="d-flex justify-content-center align-items-center my-4">
   <img src="<?= base_url('/pattern.png') ?>" alt="Logo" width="100" class="d-inline-block align-text-top me-2">
@@ -85,6 +89,19 @@
         <?= $this->include('partials/book_list') ?>
       </div>
       <div class="col">
+        <h2 class="fs-4">
+          Koleksi Buku Terbaru
+        </h2>
+        <?php foreach ($latestBooks as $book): ?>
+          <div class="card border-light mb-3 shadow-sm" style="width: 18rem;">
+            <img src="https://placehold.co/600x400" class="card-img-top" alt="Gambar Buku">
+            <div class="card-body">
+              <h5 class="card-title"><?= esc($book['title'] ?? 'Tanpa Judul') ?></h5>
+              <p class="card-text"><?= esc($book['synopsis'] ?? 'Tidak ada sinopsis.') ?></p>
+              <a href="<?= base_url('books/detail?title=' . urlencode($book['title'])) ?>" class="btn btn-secondary btn-sm">Detail <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        <?php endforeach; ?>
       </div>
     </div>
   </div>
@@ -171,47 +188,33 @@
         <!-- Ubah -->
         <div id="ubahSection" style="display: none;">
           <div class="mb-3">
-            <label for="judulCari" class="form-label">Cari Judul</label>
-            <input class="form-control" list="datalistOptions" id="judulCari" placeholder="Ketik judul">
-            <datalist id="datalistOptions">
-              <?php foreach ($allBooks as $book): ?>
-                <option value="<?= esc($book['title']) ?>" 
-                  data-author="<?= esc($book['author']) ?>"
-                  data-illustrator="<?= esc($book['illustrator'] ?? '') ?>"
-                  data-publisher="<?= esc($book['publisher'] ?? '') ?>"
-                  data-series="<?= esc($book['series'] ?? '') ?>"
-                  data-quantity="<?= esc($book['quantity'] ?? '') ?>"
-                  data-genre="<?= esc($book['genre']) ?>"
-                  data-year="<?= esc($book['year']) ?>"
-                  data-image="<?= esc($book['image']) ?>"
-                  data-notes="<?= esc($book['notes'] ?? '') ?>">
-              <?php endforeach; ?>
-            </datalist>
+            <label for="judulCari" class="form-label required">Cari Judul</label>
+            <input type="text" class="form-control" id="judulCari" placeholder="Ketik judul">
           </div>
           <div id="ubahFormFields" style="display: none;">
             <div class="row mb-3">
               <div class="col">
-                <label for="judulUbah" class="form-label">Judul</label>
+                <label for="judulUbah" class="form-label required">Judul</label>
                 <input type="text" class="form-control" id="judulUbah" aria-describedby="judulHelp">
               </div>
               <div class="col">
-                <label for="pengarangUbah" class="form-label">Pengarang</label>
+                <label for="pengarangUbah" class="form-label required">Pengarang</label>
                 <input type="text" class="form-control" id="pengarangUbah" aria-describedby="pengarangHelp">
               </div>
             </div>
             <div class="row mb-3">
               <div class="col">
-                <label for="illustratorUbah" class="form-label">Illustrator</label>
+                <label for="illustratorUbah" class="form-label required">Illustrator</label>
                 <input type="text" class="form-control" id="illustratorUbah" aria-describedby="illustratorHelp">
               </div>
               <div class="col">
-                <label for="publisherUbah" class="form-label">Publisher</label>
+                <label for="publisherUbah" class="form-label required">Publisher</label>
                 <input type="text" class="form-control" id="publisherUbah" aria-describedby="publisherHelp">
               </div>
             </div>
             <div class="row mb-3">
               <div class="col">
-                <label for="seriesUbah" class="form-label">Series</label>
+                <label for="seriesUbah" class="form-label required">Series</label>
                 <input type="text" class="form-control" id="seriesUbah" aria-describedby="seriesHelp">
               </div>
               <div class="col">
@@ -233,7 +236,7 @@
                 <input class="form-control" type="file" id="gambarUbah">
               </div>
               <div class="col">
-                <label for="quantityUbah" class="form-label">Quantity</label>
+                <label for="quantityUbah" class="form-label required">Quantity</label>
                 <input type="number" class="form-control" id="quantityUbah" aria-describedby="quantityHelp">
               </div>
             </div>
@@ -252,18 +255,56 @@
   </div>
 </div>
 
+<!-- Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-config='{"delay": 5000}'>
+    <div class="toast-header">
+      <img src="<?= base_url('/pattern.png') ?>" class="rounded me-2" alt="Logo" style="width: 20px;">
+      <strong class="me-auto">Perpustakaan</strong>
+      <small id="toastTime"><?= date('H:i') ?></small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Hello, world! This is a toast message.
+    </div>
+  </div>
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById('exampleModal');
   const modalTitle = modal.querySelector('.modal-title');
   const tambahSection = document.getElementById('tambahSection');
   const ubahSection = document.getElementById('ubahSection');
+  const toastLiveExample = document.getElementById('liveToast');
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+  const toastBody = document.querySelector('.toast-body');
+  const bookTitles = <?= json_encode($bookTitles) ?>;
+  const books = <?= json_encode($allBooks) ?>;
+  window.books = books;
   // let cameraStream;
   // const openCameraBtn = document.getElementById('openCameraBtn');
   // const captureBtn = document.getElementById('captureBtn');
   // const video = document.getElementById('cameraPreview');
   // const canvas = document.getElementById('cameraCanvas');
   // const hint = document.getElementById('cameraHint');
+
+  // Autocomplete for title only
+  $('#judulCari').autocomplete({
+    source: function(request, response) {
+      // Filter titles based on the user's input
+      const results = window.books
+        .map(b => b.title)
+        .filter(title => title.toLowerCase().includes(request.term.toLowerCase()));
+      response(results);
+    },
+    minLength: 1,
+    select: function(event, ui) {
+      $(this).val(ui.item.value);
+      fillEditForm(ui.item.value);
+      return false;
+    }
+  });
 
   $('#genreSelectpicker').on('changed.bs.select', function (e) {
     loadBooks();
@@ -292,6 +333,35 @@ document.addEventListener("DOMContentLoaded", () => {
         $('#booksContainer').html(response);
       },
       error: function(xhr, status, error) {
+      }
+    });
+  }
+
+  function loadBooksAndDatalist() {
+    let formData = $('#selectpickerForm').serialize();
+    let searchValue = $('input[name="search"]').val();
+    if (searchValue) {
+      formData += '&search=' + encodeURIComponent(searchValue);
+    }
+
+    $.ajax({
+      url: "<?= base_url('books/filter') ?>",
+      type: "GET",
+      data: formData,
+      success: function(response) {
+        $('#booksContainer').html(response);
+
+        // Fetch all books for datalist and update global books array
+        $.ajax({
+          url: "<?= base_url('books/all') ?>",
+          type: "GET",
+          dataType: "json",
+          success: function(data) {
+            updateDatalistOptions(data.books);
+            // Update global books array
+            window.books = data.books;
+          }
+        });
       }
     });
   }
@@ -371,11 +441,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const newTitle = $('#judulUbah').val();
     const newAuthor = $('#pengarangUbah').val();
     const newIllustrator = $('#illustratorUbah').val();
+    const newPublisher = $('#publisherUbah').val();
+    const newSeries = $('#seriesUbah').val();
     const newGenre = $('#kategoriUbah').val();
-    const newYear = $('#tahunUbah').val();
     const newImage = $('#gambarUbah')[0].files[0];
+    const newQuantity = $('#quantityUbah').val();
+    const newNotes = $('#notesUbah').val();
 
-    if (!originalTitle || !newTitle || !newAuthor || !newIllustrator || !newGenre || !newYear) {
+    if (!originalTitle || !newTitle || !newAuthor || !newIllustrator || !newPublisher || !newSeries || !newQuantity) {
       alert('Semua field harus diisi!');
       return;
     }
@@ -385,8 +458,11 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append('title', newTitle);
     formData.append('author', newAuthor);
     formData.append('illustrator', newIllustrator);
+    formData.append('publisher', newPublisher);
+    formData.append('series', newSeries);
     formData.append('genre', newGenre);
-    formData.append('year', newYear);
+    formData.append('quantity', newQuantity);
+    formData.append('notes', newNotes);
     if (newImage) {
       formData.append('image', newImage);
     }
@@ -401,8 +477,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.success) {
           $('#exampleModal').modal('hide');
           clearForm();
-          loadBooks();
-          alert('Buku berhasil diubah!');
+          // Fetch all books and update window.books
+          $.ajax({
+            url: "<?= base_url('books/all') ?>",
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+              window.books = data.books;
+              loadBooks(); // Optionally reload the book list display
+              showToast('Berhasil mengubah buku dengan judul: ' + newTitle);
+            }
+          });
         } else {
           alert('Gagal mengubah buku: ' + response.message);
         }
@@ -412,6 +497,20 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error('Error:', error);
       }
     });
+  }
+
+  function updateToastTime() {
+    const now = new Date();
+    const jamMenit = now.getHours().toString().padStart(2, '0') + ':' +
+                     now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('toastTime').textContent = jamMenit;
+  }
+
+  // Tampilkan toast dan update waktu
+  function showToast(message) {
+    toastBody.textContent = message;
+    updateToastTime();
+    toastBootstrap.show();
   }
 
   // Handle modal open for Tambah
@@ -509,49 +608,74 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // $('#judulCari').on('input', function() {
+  //   const input = $(this);
+  //   const datalist = $('#datalistOptions')[0];
+  //   const options = datalist.options;
+  //   const hiddenForm = $('#ubahFormFields'); // Always select by ID
+
+  //   // Reset form values first
+  //   hiddenForm.find('#judulUbah').val('');
+  //   hiddenForm.find('#pengarangUbah').val('');
+  //   hiddenForm.find('#kategoriUbah').prop('selectedIndex', 0);
+  //   hiddenForm.find('#tahunUbah').prop('selectedIndex', 0);
+  //   hiddenForm.find('#gambarUbah').val('');
+  //   hiddenForm.find('#illustratorUbah').val(''); // Reset illustrator field
+  //   hiddenForm.find('#publisherUbah').val(''); // Reset publisher field
+  //   hiddenForm.find('#seriesUbah').val(''); // Reset series field
+  //   hiddenForm.find('#quantityUbah').val(''); // Reset quantity field
+  //   hiddenForm.find('#notesUbah').val(''); // Reset notes field
+  //   input.removeData('originalImage');
+  //   hiddenForm.hide();
+
+  //   let matchFound = false;
+
+  //   for (let option of options) {
+  //     if (option.value === input.val()) {
+  //       matchFound = true;
+  //       // Show the hidden form
+  //       hiddenForm.show();
+
+  //       // Fill the form with selected book data
+  //       hiddenForm.find('#judulUbah').val(option.value);
+  //       hiddenForm.find('#pengarangUbah').val(option.dataset.author);
+  //       hiddenForm.find('#kategoriUbah').val(option.dataset.genre);
+  //       hiddenForm.find('#tahunUbah').val(option.dataset.year);
+  //       hiddenForm.find('#illustratorUbah').val(option.dataset.illustrator); // Fill illustrator field
+  //       hiddenForm.find('#publisherUbah').val(option.dataset.publisher); // Fill publisher field
+  //       hiddenForm.find('#seriesUbah').val(option.dataset.series); // Fill series field
+  //       hiddenForm.find('#quantityUbah').val(option.dataset.quantity); // Fill quantity field
+  //       hiddenForm.find('#notesUbah').val(option.dataset.notes); // Fill notes field
+  //       input.data('originalImage', option.dataset.image);
+  //       break;
+  //     }
+  //   }
+  // });
+
+  // Fill edit form when input changes or autocomplete selects
   $('#judulCari').on('input', function() {
-    const input = $(this);
-    const datalist = $('#datalistOptions')[0];
-    const options = datalist.options;
-    const hiddenForm = $('#ubahFormFields'); // Always select by ID
-
-    // Reset form values first
-    hiddenForm.find('#judulUbah').val('');
-    hiddenForm.find('#pengarangUbah').val('');
-    hiddenForm.find('#kategoriUbah').prop('selectedIndex', 0);
-    hiddenForm.find('#tahunUbah').prop('selectedIndex', 0);
-    hiddenForm.find('#gambarUbah').val('');
-    hiddenForm.find('#illustratorUbah').val(''); // Reset illustrator field
-    hiddenForm.find('#publisherUbah').val(''); // Reset publisher field
-    hiddenForm.find('#seriesUbah').val(''); // Reset series field
-    hiddenForm.find('#quantityUbah').val(''); // Reset quantity field
-    hiddenForm.find('#notesUbah').val(''); // Reset notes field
-    input.removeData('originalImage');
-    hiddenForm.hide();
-
-    let matchFound = false;
-
-    for (let option of options) {
-      if (option.value === input.val()) {
-        matchFound = true;
-        // Show the hidden form
-        hiddenForm.show();
-
-        // Fill the form with selected book data
-        hiddenForm.find('#judulUbah').val(option.value);
-        hiddenForm.find('#pengarangUbah').val(option.dataset.author);
-        hiddenForm.find('#kategoriUbah').val(option.dataset.genre);
-        hiddenForm.find('#tahunUbah').val(option.dataset.year);
-        hiddenForm.find('#illustratorUbah').val(option.dataset.illustrator); // Fill illustrator field
-        hiddenForm.find('#publisherUbah').val(option.dataset.publisher); // Fill publisher field
-        hiddenForm.find('#seriesUbah').val(option.dataset.series); // Fill series field
-        hiddenForm.find('#quantityUbah').val(option.dataset.quantity); // Fill quantity field
-        hiddenForm.find('#notesUbah').val(option.dataset.notes); // Fill notes field
-        input.data('originalImage', option.dataset.image);
-        break;
-      }
-    }
+    fillEditForm($(this).val());
   });
+
+  function fillEditForm(selectedTitle) {
+    const book = window.books.find(b => b.title === selectedTitle);
+    const hiddenForm = $('#ubahFormFields');
+    if (book) {
+      hiddenForm.show();
+      hiddenForm.find('#judulUbah').val(book.title);
+      hiddenForm.find('#pengarangUbah').val(book.author || '');
+      hiddenForm.find('#kategoriUbah').val(book.genre || '');
+      hiddenForm.find('#tahunUbah').val(book.year || '');
+      hiddenForm.find('#illustratorUbah').val(book.illustrator || '');
+      hiddenForm.find('#publisherUbah').val(book.publisher || '');
+      hiddenForm.find('#seriesUbah').val(book.series || '');
+      hiddenForm.find('#quantityUbah').val(book.quantity || '');
+      hiddenForm.find('#notesUbah').val(book.notes || '');
+      $('#judulCari').data('originalImage', book.image || '');
+    } else {
+      hiddenForm.hide();
+    }
+  }
 });
 </script>
 
