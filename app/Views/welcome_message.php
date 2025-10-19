@@ -255,30 +255,12 @@
   </div>
 </div>
 
-<!-- Toast -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-config='{"delay": 5000}'>
-    <div class="toast-header">
-      <img src="<?= base_url('/pattern.png') ?>" class="rounded me-2" alt="Logo" style="width: 20px;">
-      <strong class="me-auto">Perpustakaan</strong>
-      <small id="toastTime"><?= date('H:i') ?></small>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body">
-      Hello, world! This is a toast message.
-    </div>
-  </div>
-</div>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById('exampleModal');
   const modalTitle = modal.querySelector('.modal-title');
   const tambahSection = document.getElementById('tambahSection');
   const ubahSection = document.getElementById('ubahSection');
-  const toastLiveExample = document.getElementById('liveToast');
-  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-  const toastBody = document.querySelector('.toast-body');
   const bookTitles = <?= json_encode($bookTitles) ?>;
   const books = <?= json_encode($allBooks) ?>;
   window.books = books;
@@ -497,20 +479,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error('Error:', error);
       }
     });
-  }
-
-  function updateToastTime() {
-    const now = new Date();
-    const jamMenit = now.getHours().toString().padStart(2, '0') + ':' +
-                     now.getMinutes().toString().padStart(2, '0');
-    document.getElementById('toastTime').textContent = jamMenit;
-  }
-
-  // Tampilkan toast dan update waktu
-  function showToast(message) {
-    toastBody.textContent = message;
-    updateToastTime();
-    toastBootstrap.show();
   }
 
   // Handle modal open for Tambah

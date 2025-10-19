@@ -62,6 +62,8 @@
                 <th>Genre</th>
                 <th>Quantity</th>
                 <th>Year</th>
+                <th>Buku 1 Hari</th>
+                <th>Tersedia</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -74,6 +76,8 @@
                 <td><?= htmlspecialchars($book['genre']) ?></td>
                 <td><?= htmlspecialchars($book['quantity']) ?></td>
                 <td><?= htmlspecialchars($book['year']) ?></td>
+                <td><?= !empty($book['isOneDayBook']) ? 'Ya' : 'Tidak' ?></td>
+                <td><?= !empty($book['available']) ? 'Ya' : 'Tidak' ?></td>
                 <td>
                     <!-- Edit -->
                     <button onclick="showEditForm(

@@ -17,12 +17,15 @@ class BookModel extends Model
         'illustrator',
         'publisher',
         'series',
+        'image',
         'quantity',
         'notes',
         'shelfPosition',
         'synopsis',
         'isInClass',
-        'year'
+        'year',
+        'isOneDayBook',
+        'available',
     ];
 
     // opsional: atur timestamp otomatis

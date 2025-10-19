@@ -100,6 +100,21 @@
         <?= $this->renderSection('content') ?>
     </div>
 
+    <!-- Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-config='{"delay": 5000}'>
+            <div class="toast-header">
+            <img src="<?= base_url('/pattern.png') ?>" class="rounded me-2" alt="Logo" style="width: 20px;">
+            <strong class="me-auto">Perpustakaan</strong>
+            <small id="toastTime"><?= date('H:i') ?></small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+            Hello, world! This is a toast message.
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -113,6 +128,7 @@
     <script src="js/plugins/flot/jquery.flot.pie.js"></script>
     <script src="js/plugins/flot/jquery.flot.symbol.js"></script>
     <script src="js/plugins/flot/jquery.flot.time.js"></script>
+    <script src="<?= base_url('js/toast.js') ?>"></script>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
