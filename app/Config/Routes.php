@@ -16,10 +16,13 @@ $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::attemptLogin');
 $routes->get('logout', 'AuthController::logout');
 $routes->get('peminjaman', 'TransactionController::peminjaman');
+$routes->post('peminjaman/add', 'TransactionController::addBorrowing');
 $routes->get('user', 'UserController::index');
 $routes->post('user/add', 'UserController::add');
 $routes->post('user/update/(:segment)', 'UserController::update/$1');
 $routes->get('user/list', 'UserController::list');
+$routes->post('user/add-guru', 'UserController::addGuru');
+$routes->post('user/update-guru/(:segment)', 'UserController::updateGuru/$1');
 $routes->get('test-firebase', 'FirebaseTest::index');
 $routes->get('api/analyze-image', 'ApiController::analyzeImage');
 

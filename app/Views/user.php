@@ -37,8 +37,8 @@
         <div class="card-body">
             <div class="collapse" id="collapseSiswaExample">
                 <div class="input-group input-group-sm mb-3 justify-content-end">
-                    <input type="text" id="searchSiswa" class="form-control" placeholder="Cari dengan NISN/Nama" aria-label="Cari dengan NISN/nama" aria-describedby="button-addon2" style="max-width: 200px;">
-                    <button class="btn btn-success" type="button" id="button-addon2">Cari</button>
+                    <input type="text" id="searchSiswa" class="form-control" placeholder="Cari dengan NISN/Nama" aria-label="Cari dengan NISN/nama" aria-describedby="cariSiswa" style="max-width: 200px;">
+                    <button class="btn btn-success" type="button" id="cariSiswa">Cari</button>
                 </div>
                 <table class="table table-hover table-striped">
                     <thead>
@@ -99,8 +99,8 @@
         <div class="card-body">
             <div class="collapse" id="collapseGuruExample">
                 <div class="input-group input-group-sm mb-3 justify-content-end">
-                    <input type="text" id="searchSiswa" class="form-control" placeholder="Cari dengan NIP/Nama" aria-label="Cari dengan NIP/nama" aria-describedby="button-addon2" style="max-width: 200px;">
-                    <button class="btn btn-success" type="button" id="button-addon2">Cari</button>
+                    <input type="text" id="searchGuru" class="form-control" placeholder="Cari dengan NIP/Nama" aria-label="Cari dengan NIP/nama" aria-describedby="cariGuru" style="max-width: 200px;">
+                    <button class="btn btn-success" type="button" id="cariGuru">Cari</button>
                 </div>
                 <table class="table table-hover table-striped">
                     <thead>
@@ -112,24 +112,22 @@
                         </tr>
                     </thead>
                     <tbody>
+                      <?php if (!empty($users)): ?>
+                        <?php $no = 1; foreach ($users as $key => $user): ?>
+                          <?php if (isset($user['role']) && $user['role'] === 'guru'): ?>
+                            <tr>
+                              <th scope="row"><?= $no++ ?></th>
+                              <td><?= esc($user['nisn'] ?? '-') ?></td>
+                              <td><?= esc($user['nama'] ?? '-') ?></td>
+                              <td><?= esc($user['jabatan'] ?? '-') ?></td>
+                            </tr>
+                          <?php endif; ?>
+                        <?php endforeach; ?>
+                      <?php else: ?>
                         <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
+                          <td colspan="4" class="text-center">Belum ada data guru.</td>
                         </tr>
-                        <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        </tr>
-                        <tr>
-                        <th scope="row">3</th>
-                        <td>John</td>
-                        <td>Doe</td>
-                        <td>@social</td>
-                        </tr>
+                      <?php endif; ?>
                     </tbody>
                 </table>
                 <nav aria-label="...">
@@ -156,52 +154,52 @@
         <h1 class="modal-title fs-5" id="exampleModalLabel">Form Tambah Siswa</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="<?= base_url('user/store') ?>" method="POST">
+      <form>
         <div class="modal-body">
-            <!-- Tambah siswa -->
-            <div id="tambahSection" style="display: none;">
-                <div class="row mb-3">
-                    <div class="col">
-                        <label for="nama" class="form-label required">Nama</label>
-                        <input type="text" class="form-control" id="nama" name="nama" aria-describedby="namaHelp" required>
-                    </div>
-                    <div class="col">
-                        <label for="nisn" class="form-label required">NISN</label>
-                        <input type="text" class="form-control" id="nisn" name="nisn" aria-describedby="nisnHelp" required>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label for="kelas" class="form-label required">Kelas</label>
-                        <input type="text" class="form-control" id="kelas" name="kelas" aria-describedby="kelasHelp" required>
-                    </div>
-                </div>
-            </div>
-            <!-- Ubah siswa -->
-            <div id="ubahSection" style="display: none;">
-                <div class="mb-3">
-                    <label for="nisnCari" class="form-label required">Cari NISN</label>
-                    <input type="text" class="form-control" id="nisnCari" placeholder="Ketik NISN">
-                </div>
-                <div id="ubahFormFields" style="display: none;">
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="nisnUbah" class="form-label required">NISN</label>
-                            <input type="text" class="form-control" id="nisnUbah" aria-describedby="nisnHelp">
-                        </div>
-                        <div class="col">
-                            <label for="namaUbah" class="form-label required">Nama</label>
-                            <input type="text" class="form-control" id="namaUbah" aria-describedby="namaHelp">
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="kelasUbah" class="form-label required">Kelas</label>
-                            <input type="text" class="form-control" id="kelasUbah" aria-describedby="kelasHelp">
-                        </div>
-                    </div>
-                </div>
-            </div>
+          <!-- Tambah siswa -->
+          <div id="tambahSection" style="display: none;">
+              <div class="row mb-3">
+                  <div class="col">
+                      <label for="nama" class="form-label required">Nama</label>
+                      <input type="text" class="form-control" id="nama" name="nama" aria-describedby="namaHelp" required>
+                  </div>
+                  <div class="col">
+                      <label for="nisn" class="form-label required">NISN</label>
+                      <input type="text" class="form-control" id="nisn" name="nisn" aria-describedby="nisnHelp" required>
+                  </div>
+              </div>
+              <div class="row mb-3">
+                  <div class="col">
+                      <label for="kelas" class="form-label required">Kelas</label>
+                      <input type="text" class="form-control" id="kelas" name="kelas" aria-describedby="kelasHelp" required>
+                  </div>
+              </div>
+          </div>
+          <!-- Ubah siswa -->
+          <div id="ubahSection" style="display: none;">
+              <div class="mb-3">
+                  <label for="nisnCari" class="form-label required">Cari NISN</label>
+                  <input type="text" class="form-control" id="nisnCari" placeholder="Ketik NISN">
+              </div>
+              <div id="ubahFormFields" style="display: none;">
+                  <div class="row mb-3">
+                      <div class="col">
+                          <label for="nisnUbah" class="form-label required">NISN</label>
+                          <input type="text" class="form-control" id="nisnUbah" aria-describedby="nisnHelp">
+                      </div>
+                      <div class="col">
+                          <label for="namaUbah" class="form-label required">Nama</label>
+                          <input type="text" class="form-control" id="namaUbah" aria-describedby="namaHelp">
+                      </div>
+                  </div>
+                  <div class="row mb-3">
+                      <div class="col">
+                          <label for="kelasUbah" class="form-label required">Kelas</label>
+                          <input type="text" class="form-control" id="kelasUbah" aria-describedby="kelasHelp">
+                      </div>
+                  </div>
+              </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -220,7 +218,7 @@
         <h1 class="modal-title fs-5" id="exampleModalGuruLabel">Form Tambah Guru</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="<?= base_url('user/store') ?>" method="POST">
+      <form>
         <div class="modal-body">
             <!-- Tambah guru -->
             <div id="tambahSectionGuru" style="display: none;">
@@ -268,6 +266,8 @@
 document.addEventListener("DOMContentLoaded", function() {
   const searchInput = document.getElementById('searchSiswa');
   const siswaTable = document.querySelector('#collapseSiswaExample table tbody');
+  const searchInputGuru = document.getElementById('searchGuru');
+  const guruTable = document.querySelector('#collapseGuruExample table tbody');
   const modal = document.getElementById('exampleModal');
   const modalTitle = modal.querySelector('.modal-title');
   const tambahSection = document.getElementById('tambahSection');
@@ -277,15 +277,27 @@ document.addEventListener("DOMContentLoaded", function() {
   const tambahSectionGuru = document.getElementById('tambahSectionGuru');
   const ubahSectionGuru = document.getElementById('ubahSectionGuru');
   let siswaList = [];
+  let guruList = [];
 
-  function fetchSiswaList() {
+  function fetchSiswaData() {
     $.get("<?= base_url('user/list') ?>", function(response) {
       if (response.success && Array.isArray(response.users)) {
         siswaList = response.users.filter(u => u.role === 'murid');
+        renderSiswaTable(siswaList);
       }
     });
   }
-  fetchSiswaList();
+  fetchSiswaData();
+
+  function fetchGuruData() {
+    $.get("<?= base_url('user/list') ?>", function(response) {
+      if (response.success && Array.isArray(response.users)) {
+        guruList = response.users.filter(u => u.role === 'guru');
+        renderGuruTable(guruList);
+      }
+    });
+  }
+  fetchGuruData();
 
   // Autocomplete for NISN
   $('#nisnCari').autocomplete({
@@ -299,6 +311,21 @@ document.addEventListener("DOMContentLoaded", function() {
     select: function(event, ui) {
       $(this).val(ui.item.value);
       fillEditForm(ui.item.value);
+      return false;
+    }
+  });
+
+  $('#nipCari').autocomplete({
+    source: function(request, response) {
+      const results = guruList
+        .map(u => u.nisn)
+        .filter(nip => nip && nip.toLowerCase().includes(request.term.toLowerCase()));
+      response(results);
+    },
+    minLength: 1,
+    select: function(event, ui) {
+      $(this).val(ui.item.value);
+      fillEditFormGuru(ui.item.value);
       return false;
     }
   });
@@ -321,8 +348,29 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
+  function fillEditFormGuru(selectedNip) {
+    const guru = guruList.find(u => u.nisn === selectedNip);
+    const hiddenForm = $('#ubahFormFieldsGuru');
+    if (guru) {
+      hiddenForm.show();
+      hiddenForm.find('#nipUbah').val(guru.nisn);
+      hiddenForm.find('#namaGuruUbah').val(guru.nama || '');
+      // Store Firebase key in a hidden field
+      if ($('#guruKey').length === 0) {
+        hiddenForm.append('<input type="hidden" id="guruKey">');
+      }
+      $('#guruKey').val(guru.key || guru.firebaseKey || guru.id || guru._key || guru.keyName || guru.key_id || guru.nisn);
+    } else {
+      hiddenForm.hide();
+    }
+  }
+
   $('#nisnCari').on('input', function() {
     fillEditForm($(this).val());
+  });
+
+  $('#nipCari').on('input', function() {
+    fillEditFormGuru($(this).val());
   });
 
   function filterSiswaTable() {
@@ -339,11 +387,16 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // Fetch latest siswa data from server (Firebase)
-  function fetchSiswaData() {
-    $.get("<?= base_url('user/list') ?>", function(response) {
-      if (response.success && Array.isArray(response.users)) {
-        renderSiswaTable(response.users);
+  function filterGuruTable() {
+    const query = searchInputGuru.value.toLowerCase();
+    const rows = guruTable.querySelectorAll('tr');
+    rows.forEach(row => {
+      const nip = row.children[1]?.textContent.toLowerCase() || '';
+      const nama = row.children[2]?.textContent.toLowerCase() || '';
+      if (nip.includes(query) || nama.includes(query)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
       }
     });
   }
@@ -369,8 +422,26 @@ document.addEventListener("DOMContentLoaded", function() {
     filterSiswaTable();
   }
 
+  function renderGuruTable(users) {
+    let html = '';
+    let no = 1;
+    users.forEach(function(user) {
+      html += `<tr>
+        <th scope="row">${no++}</th>
+        <td>${user.nisn ?? '-'}</td>
+        <td>${user.nama ?? '-'}</td>
+        <td>${user.jabatan ?? '-'}</td>
+      </tr>`;
+    });
+    if (html === '') {
+      html = `<tr><td colspan="4" class="text-center">Belum ada data guru.</td></tr>`;
+    }
+    guruTable.innerHTML = html;
+    filterGuruTable();
+  }
+
   // Add form submission handler for the modal
-  $('.modal-footer .btn-primary').on('click', function(e) {
+  $('#exampleModal .modal-footer .btn-primary').on('click', function(e) {
     e.preventDefault();
 
     const isEditMode = ubahSection.style.display === 'block';
@@ -382,10 +453,21 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
+  $('#exampleModalGuru .modal-footer .btn-primary').on('click', function(e) {
+    e.preventDefault();
+    const isEditMode = ubahSectionGuru.style.display === 'block';
+    if (isEditMode) {
+      handleGuruEdit();
+    } else {
+      handleGuruAdd();
+    }
+  });
+
   function handleUserAdd() {
-    const nama = modal.nama.value.trim();
-    const nisn = modal.nisn.value.trim();
-    const kelas = modal.kelas.value.trim();
+    const siswaForm = modal.querySelector('form');
+    const nama = siswaForm.nama.value.trim();
+    const nisn = siswaForm.nisn.value.trim();
+    const kelas = siswaForm.kelas.value.trim();
 
     const formData = new FormData();
     formData.append('nama', nama);
@@ -400,14 +482,10 @@ document.addEventListener("DOMContentLoaded", function() {
       contentType: false,
       success: function(response) {
         if (response.success) {
-          // Close modal
           $('#exampleModal').modal('hide');
-          
-          // Clear form
           $('#nama').val('');
           $('#nisn').val('');
           $('#kelas').val('');
-          
           showToast('Berhasil menambahkan siswa dengan NISN: ' + nisn);
           fetchSiswaData();
         } else {
@@ -453,6 +531,73 @@ document.addEventListener("DOMContentLoaded", function() {
       },
       error: function() {
         showToast('Terjadi kesalahan saat mengubah data siswa.');
+      }
+    });
+  }
+  
+  function handleGuruAdd() {
+    const guruForm = modalGuru.querySelector('form');
+    const nama = guruForm.namaGuru.value.trim();
+    const nip = guruForm.nip.value.trim();
+
+    const formData = new FormData();
+    formData.append('namaGuru', nama);
+    formData.append('nip', nip);
+
+    $.ajax({
+      url: "<?= base_url('user/add-guru') ?>",
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.success) {
+          $('#exampleModalGuru').modal('hide');
+          $('#namaGuru').val('');
+          $('#nip').val('');
+          showToast('Berhasil menambahkan guru dengan NIP: ' + nip);
+          fetchGuruData();
+        } else {
+          showToast('Gagal menambahkan guru dengan NIP: ' + nip);
+        }
+      },
+      error: function() {
+        showToast('Terjadi kesalahan saat menambahkan guru');
+      }
+    });
+  }
+
+  function handleGuruEdit() {
+    const key = $('#guruKey').val();
+    const nama = $('#namaGuruUbah').val().trim();
+    const nip = $('#nipUbah').val().trim();
+
+    if (!key) {
+      showToast('Tidak dapat menemukan data guru untuk diubah.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('namaGuruUbah', nama);
+    formData.append('nipUbah', nip);
+
+    $.ajax({
+      url: "<?= base_url('user/update-guru') ?>/" + key,
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        if (response.success) {
+          $('#exampleModalGuru').modal('hide');
+          showToast('Berhasil mengubah data guru.');
+          fetchGuruData();
+        } else {
+          showToast('Gagal mengubah data guru.');
+        }
+      },
+      error: function() {
+        showToast('Terjadi kesalahan saat mengubah data guru.');
       }
     });
   }
@@ -516,7 +661,10 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   searchInput.addEventListener('input', filterSiswaTable);
-  document.getElementById('button-addon2').addEventListener('click', filterSiswaTable);
+  document.getElementById('cariSiswa').addEventListener('click', filterSiswaTable);
+  
+  searchInputGuru.addEventListener('input', filterGuruTable);
+  document.getElementById('cariGuru').addEventListener('click', filterGuruTable);
 });
 </script>
 

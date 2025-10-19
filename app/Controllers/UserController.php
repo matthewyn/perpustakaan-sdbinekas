@@ -111,6 +111,76 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function addGuru()
+    {
+        $rules = [
+            'namaGuru' => 'required|min_length[3]',
+            'nip' => 'required|numeric|min_length[9]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => $this->validator->getErrors()
+            ]);
+        }
+
+        $data = [
+            'nama' => $this->request->getPost('namaGuru'),
+            'nisn' => $this->request->getPost('nip'), // Map nip to nisn in Firebase
+            'password' => $this->request->getPost('nip'),
+            'role' => 'guru',
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        try {
+            $this->db->getReference('users')->push($data);
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Guru added successfully'
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Guru not added'
+            ]);
+        }
+    }
+
+    public function updateGuru($key)
+    {
+        $rules = [
+            'namaGuruUbah' => 'required|min_length[3]',
+            'nipUbah' => 'required|numeric|min_length[9]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => $this->validator->getErrors()
+            ]);
+        }
+
+        $data = [
+            'nama' => $this->request->getPost('namaGuruUbah'),
+            'nisn' => $this->request->getPost('nipUbah'), // Map nip to nisn in Firebase
+            'role' => 'guru'
+        ];
+
+        try {
+            $this->db->getReference('users/' . $key)->update($data);
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Guru updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Guru not updated'
+            ]);
+        }
+    }
 }
 
 // <?php

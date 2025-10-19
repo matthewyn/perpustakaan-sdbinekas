@@ -6,6 +6,9 @@
         border-color: #dee2e6;
         color: white;
     }
+    .ui-autocomplete {
+        z-index: 2000 !important;
+    }
 </style>
 <div class="container mt-4">
     <!-- Main -->
@@ -140,24 +143,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        </tr>
-                        <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        </tr>
-                        <tr>
-                        <th scope="row">3</th>
-                        <td>John</td>
-                        <td>Doe</td>
-                        <td>@social</td>
-                        </tr>
+                        <?php if (!empty($borrowings)): ?>
+                            <?php $no = 1; foreach ($borrowings as $row): ?>
+                                <tr>
+                                    <th scope="row"><?= $no++ ?></th>
+                                    <td><?= esc($row['nama']) ?></td>
+                                    <td><?= esc($row['judul']) ?></td>
+                                    <td><?= esc($row['tanggal']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="text-center">Belum ada data peminjaman.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
                 <nav aria-label="...">
@@ -237,40 +236,28 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Form Peminjaman</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row mb-3">
-            <div class="col siswa-select">
-              <label for="siswa" class="form-label required">Siswa</label>
-              <select class="form-select" id="siswa" name="siswa" aria-label="Select siswa">
-                <option selected disabled>Pilih siswa</option>
-                <?php
-                  foreach ($genres as $genre) {
-                    echo "<option value=\"" . esc($genre) . "\">" . esc($genre) . "</option>";
-                  }
-                ?>
-              </select>
-            </div>
-            <div class="col">
-              <label for="buku" class="form-label required">Buku</label>
-              <select class="form-select" id="buku" name="buku" aria-label="Select buku">
-                <option selected disabled>Pilih buku</option>
-                <?php
-                  foreach ($availableBooks as $book) {
-                    echo "<option value=\"" . esc($book['title']) . "\">" . esc($book['title']) . "</option>";
-                  }
-                ?>
-              </select>
-            </div>
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Form Peminjaman</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+        <form>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col siswa-select">
+                        <label for="nisnCari" class="form-label required">Cari NISN Siswa</label>
+                        <input type="text" class="form-control" id="nisnCari" name="nisnCari" placeholder="Ketik NISN" required>
+                    </div>
+                    <div class="col">
+                        <label for="judulCari" class="form-label required">Cari Judul Buku</label>
+                        <input type="text" class="form-control" id="judulCari" name="judulCari" placeholder="Ketik judul" required>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
     </div>
   </div>
 </div>
@@ -279,6 +266,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     var collapse = document.getElementById('collapsePeminjamanExample');
     var chevronIcon = document.querySelector('[data-bs-target="#collapsePeminjamanExample"]');
+    const modal = document.getElementById('exampleModal');
+    const modalTitle = modal.querySelector('.modal-title');
+    let siswaList = [];
+    let bookTitles = [];
 
     collapse.addEventListener('show.bs.collapse', function () {
         chevronIcon.classList.remove('bi-chevron-down');
@@ -294,22 +285,6 @@ document.addEventListener('DOMContentLoaded', function() {
         chevronIcon.classList.remove('bi-chevron-up');
         chevronIcon.classList.add('bi-chevron-down');
     }
-
-    // Modal logic for title and siswa select
-    var modalTitle = document.getElementById('exampleModalLabel');
-    var siswaSelectCol = document.querySelector('.siswa-select');
-    var tambahPeminjamanBtn = document.querySelectorAll('button[data-bs-target="#exampleModal"]')[0];
-    var tambahPengembalianBtn = document.querySelectorAll('button[data-bs-target="#exampleModal"]')[1];
-
-    tambahPeminjamanBtn.addEventListener('click', function() {
-        modalTitle.textContent = 'Form Peminjaman';
-        siswaSelectCol.style.display = '';
-    });
-
-    tambahPengembalianBtn.addEventListener('click', function() {
-        modalTitle.textContent = 'Form Pengembalian';
-        siswaSelectCol.style.display = 'none';
-    });
 
     var data2 = [
         [gd(2012, 1, 1), 7], [gd(2012, 1, 2), 6], [gd(2012, 1, 3), 4], [gd(2012, 1, 4), 8],
@@ -420,6 +395,117 @@ document.addEventListener('DOMContentLoaded', function() {
     var previousPoint = null, previousLabel = null;
 
     $.plot($("#flot-dashboard-chart"), dataset, options);
+
+    function fetchSiswaData() {
+        $.get("<?= base_url('user/list') ?>", function(response) {
+            if (response.success && Array.isArray(response.users)) {
+            siswaList = response.users.filter(u => u.role === 'murid');
+            }
+        });
+    }
+
+    // Call this on page load
+    fetchSiswaData();
+
+    function fetchBookData() {
+        $.get("<?= base_url('books/all') ?>", function(response) {
+            if (response.books && Array.isArray(response.books)) {
+            bookTitles = response.books
+                .map(b => b.title)
+                .filter(title => !!title);
+            }
+        });
+    }
+
+    // Call this on page load
+    fetchBookData();
+
+    // Autocomplete for NISN
+    $('#nisnCari').autocomplete({
+        source: function(request, response) {
+            const results = siswaList
+            .map(u => u.nisn)
+            .filter(nisn => nisn && nisn.toLowerCase().includes(request.term.toLowerCase()));
+            response(results);
+        },
+        minLength: 1,
+        select: function(event, ui) {
+            $(this).val(ui.item.value);
+            // Optionally, fill other fields or trigger actions here
+            return false;
+        }
+    });
+
+    // Autocomplete for title only
+    $('#judulCari').autocomplete({
+        source: function(request, response) {
+            const results = bookTitles.filter(title =>
+            title.toLowerCase().includes(request.term.toLowerCase())
+            );
+            response(results);
+        },
+        minLength: 1,
+        select: function(event, ui) {
+            $(this).val(ui.item.value);
+            // Optionally, fill other fields or trigger actions here
+            return false;
+        }
+    });
+
+    // Add form submission handler for the modal
+    $('#exampleModal .modal-footer .btn-primary').on('click', function(e) {
+        e.preventDefault();
+        
+        handlePeminjamanAdd();
+    });
+
+    function handlePeminjamanAdd() {
+        const peminjamanForm = modal.querySelector('form');
+        const nisn = peminjamanForm.nisnCari.value.trim();
+        const judul = peminjamanForm.judulCari.value.trim();
+
+        if (!nisn || !judul) {
+            showToast('NISN dan Judul Buku harus diisi!');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('nisnCari', nisn);
+        formData.append('judulCari', judul);
+
+        $.ajax({
+            url: "<?= base_url('peminjaman/add') ?>",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    $('#exampleModal').modal('hide');
+                    showToast('Peminjaman berhasil ditambahkan!');
+                } else {
+                    showToast('Gagal menambahkan peminjaman.');
+                }
+            },
+            error: function(xhr, status, error) {
+                showToast('Terjadi kesalahan saat menambah peminjaman!');
+            }
+        });
+    }
+
+    // Function to clear form fields
+    function clearForm() {
+        const inputs = modal.querySelectorAll('input, select');
+        inputs.forEach(input => {
+        if (input.type === 'file') {
+            input.value = '';
+        } else if (input.type === 'select-one') {
+            input.selectedIndex = 0;
+        } else {
+            input.value = '';
+        }
+        });
+    }
 });
 </script>
 
