@@ -23,12 +23,11 @@ $routes->post('user/update/(:segment)', 'UserController::update/$1');
 $routes->get('user/list', 'UserController::list');
 $routes->post('user/add-guru', 'UserController::addGuru');
 $routes->post('user/update-guru/(:segment)', 'UserController::updateGuru/$1');
-$routes->get('test-firebase', 'FirebaseTest::index');
 $routes->get('api/analyze-image', 'ApiController::analyzeImage');
 
-//CRUD
-$routes->get('/buku', 'Buku::index');
-$routes->post('/buku/add', 'Buku::add');
-$routes->post('/buku/edit/(:any)', 'Buku::edit/$1');
-$routes->post('/buku/delete', 'Buku::delete');
-$routes->post('buku/importJson', 'Buku::importJson');
+// BUKU CRUD ROUTES
+$routes->get('management-buku', 'BookManagementController::index');
+$routes->post('management-buku/add', 'BookManagementController::add');
+$routes->post('management-buku/edit/(:any)', 'BookManagementController::edit/$1');
+$routes->match(['get','post'], 'management-buku/delete', 'BookManagementController::delete');
+$routes->post('management-buku/importJson', 'BookManagementController::importJson');

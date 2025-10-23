@@ -65,7 +65,7 @@
                   <i class="bi bi-plus"></i>
                   Tambah Buku
                 </button>
-                <button type="button" id="ubah" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <button type="button" id="ubah" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" style="visibility: hidden;">
                 <i class="bi bi-pencil-square"></i>
                 Ubah Buku
               </button>

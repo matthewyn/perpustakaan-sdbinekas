@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <!-- <link href="font-awesome/css/font-awesome.css" rel="stylesheet"> -->
+    <link href="<?= base_url('css/animate.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('css/style.css') ?>" rel="stylesheet">
     <style>
         .form-label.required:after {
             content:"*";
@@ -92,6 +92,14 @@
                         </a>
                     <?php endif; ?>
                 </li>
+                <li class="list-group-item border-0">
+                    <?php if (session('role') !== 'teacher'): ?>
+                        <a href="<?= base_url('management-buku') ?>" style="text-decoration: none; color: inherit;">
+                            <i class="bi bi-book"></i>
+                            Manajemen Buku
+                        </a>
+                    <?php endif; ?>
+                </li>
             </ul>
         </div>
     </div>
@@ -121,13 +129,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
 
     <!-- Flot -->
-    <script src="js/plugins/flot/jquery.flot.js"></script>
-    <script src="js/plugins/flot/jquery.flot.tooltip.min.js"></script>
-    <script src="js/plugins/flot/jquery.flot.spline.js"></script>
-    <script src="js/plugins/flot/jquery.flot.resize.js"></script>
-    <script src="js/plugins/flot/jquery.flot.pie.js"></script>
-    <script src="js/plugins/flot/jquery.flot.symbol.js"></script>
-    <script src="js/plugins/flot/jquery.flot.time.js"></script>
+    <script src="<?= base_url('js/plugins/flot/jquery.flot.js') ?>"></script>
+    <script src="<?= base_url('js/plugins/flot/jquery.flot.tooltip.min.js') ?>"></script>
+    <script src="<?= base_url('js/plugins/flot/jquery.flot.spline.js') ?>"></script>
+    <script src="<?= base_url('js/plugins/flot/jquery.flot.resize.js') ?>"></script>
+    <script src="<?= base_url('js/plugins/flot/jquery.flot.pie.js') ?>"></script>
+    <script src="<?= base_url('js/plugins/flot/jquery.flot.symbol.js') ?>"></script>
+    <script src="<?= base_url('js/plugins/flot/jquery.flot.time.js') ?>"></script>
     <script src="<?= base_url('js/toast.js') ?>"></script>
 
     <script>

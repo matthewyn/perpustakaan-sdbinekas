@@ -13,7 +13,7 @@
 
 <h1 class="mb-4">Detail Buku</h1>
 
-<div class="card">
+<div class="card" style="border-style: dashed;">
   <div class="card-body">
     <div class="row">
       <div class="col-auto">
